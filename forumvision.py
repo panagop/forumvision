@@ -8,7 +8,8 @@ def main_page():
     st.markdown("# Forumvision - full table")
     st.sidebar.markdown("# Forumvision - full table")
 
-    st.dataframe(df.head(200))
+    st.dataframe(df)
+    # st.dataframe(df.head(200))
 
 
 # def page2():
@@ -32,4 +33,4 @@ def main_page():
 if __name__ == "__main__":
     main_page()
 
-    
+
