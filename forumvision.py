@@ -4,11 +4,11 @@ import pandas as pd
 
 df = pd.read_excel("data/forumvision.xlsx")
 
-# def main_page():
-st.markdown("# Forumvision - full table")
-st.sidebar.markdown("# Forumvision - full table")
+def main_page():
+    st.markdown("# Forumvision - full table")
+    st.sidebar.markdown("# Forumvision - full table")
 
-st.dataframe(df.head(200))
+    st.dataframe(df.head(200))
 
 
 # def page2():
@@ -28,3 +28,8 @@ st.dataframe(df.head(200))
 
 # selected_page = st.sidebar.selectbox("Select a page", page_names_to_funcs.keys())
 # page_names_to_funcs[selected_page]()
+
+if __name__ == "__main__":
+    main_page()
+
+    
