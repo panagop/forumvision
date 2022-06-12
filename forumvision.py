@@ -1,36 +1,28 @@
 ﻿# Contents of ~/my_app/streamlit_app.py
 import streamlit as st
 import pandas as pd
+import os.path
+import gspread
+from gspread_dataframe import get_as_dataframe
 
-df = pd.read_excel("data/forumvision.xlsx")
+
+# df = pd.read_excel("data/forumvision.xlsx")
+
+if os.path.exists('credentials.json'):
+    sa = gspread.service_account(filename='credentials.json')
+    sh =sa.open("forumvision")
+    wks = sh.worksheet(title="Sheet1")
+    df = get_as_dataframe(wks, usecols=[0,1,2,3,4,5])
+    # print('loaded from google sheet')
+else:
+    df = pd.read_excel("data/forumvision.xlsx")
+    # print('loaded from local file')
 
 def main_page():
     st.markdown("# Forumvision - full table")
     st.sidebar.markdown("# Forumvision - full table")
-
     st.dataframe(df)
-    # st.dataframe(df.head(200))
 
-
-# def page2():
-#     st.markdown("# Page 2 ❄️")
-#     st.sidebar.markdown("# Page 2 ❄️")
-
-
-# def page3():
-#     st.markdown("# Page 3 🎉")
-#     st.sidebar.markdown("# Page 3 🎉")
-
-# page_names_to_funcs = {
-#     "Main Page": main_page,
-#     "Page 2": page2,
-#     "Page 3": page3,
-# }
-
-# selected_page = st.sidebar.selectbox("Select a page", page_names_to_funcs.keys())
-# page_names_to_funcs[selected_page]()
 
 if __name__ == "__main__":
     main_page()
-
-
