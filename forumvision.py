@@ -23,7 +23,7 @@ if os.path.exists('credentials.json'):
 else:
     df = pd.read_excel("data/forumvision.xlsx")
     # print('loaded from local file')
-    st.write(type(st.secrets.creds))
+    st.write(type(dict(st.secrets.creds)))
 
 def main_page():
     st.markdown("# Forumvision - full table")
