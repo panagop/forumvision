@@ -1,5 +1,4 @@
-﻿# Contents of ~/my_app/pages/page_2.py
-import streamlit as st
+﻿import streamlit as st
 import pandas as pd
 from forumvision import df
 import altair as alt

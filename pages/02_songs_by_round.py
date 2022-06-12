@@ -1,6 +1,4 @@
-﻿# Contents of ~/my_app/pages/page_2.py
-import streamlit as st
-import pandas as pd
+﻿import streamlit as st
 from forumvision import df
 
 st.markdown("# Songs by round")
@@ -12,4 +10,4 @@ selected_round = st.sidebar.selectbox('Select a game/round', players)
 
 st.markdown(f"### Playlist of {selected_round}")
 
-st.dataframe(df[df['Game']==selected_round])
+st.dataframe(df[df['Game'] == selected_round])
