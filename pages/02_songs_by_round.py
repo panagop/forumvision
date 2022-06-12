@@ -8,8 +8,8 @@ st.sidebar.markdown("## Songs by round")
 
 players = sorted(df['Game'].unique())
 
-selected_round = st.selectbox('Select a game/round', players)
+selected_round = st.sidebar.selectbox('Select a game/round', players)
 
-st.markdown(f"### {selected_round}")
+st.markdown(f"### Playlist of {selected_round}")
 
 st.dataframe(df[df['Game']==selected_round])
