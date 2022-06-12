@@ -21,9 +21,16 @@ if os.path.exists('credentials.json'):
     df = get_as_dataframe(wks, usecols=[0,1,2,3,4,5])
     # print('loaded from google sheet')
 else:
-    df = pd.read_excel("data/forumvision.xlsx")
+    # df = pd.read_excel("data/forumvision.xlsx")
+    creds = dict(st.secrets.creds)
+    sa = gspread.service_account_from_dict(creds)
+    sh =sa.open("forumvision")
+    wks = sh.worksheet(title="Sheet1")
+    df = get_as_dataframe(wks, usecols=[0,1,2,3,4,5])
+
+
     # print('loaded from local file')
-    st.write(dict(st.secrets.creds))
+    # st.write(dict(st.secrets.creds))
 
 def main_page():
     st.markdown("# Forumvision - full table")
