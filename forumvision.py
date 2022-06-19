@@ -3,7 +3,10 @@ import json
 import streamlit as st
 import gspread
 from gspread_dataframe import get_as_dataframe
-
+from sqlalchemy import create_engine
+from sqlalchemy.orm import Session
+from models import Base, Gyros, Song
+import pandas as pd
 
 # # Alternative option: Load data from Excel file
 # df = pd.read_excel("data/forumvision.xlsx")
@@ -16,6 +19,9 @@ if os.path.exists('credentials.json'):
 else:
     creds = dict(st.secrets.creds)
 
+engine = create_engine('sqlite:///data/forumvision.db', echo=False)
+Base.metadata.create_all(engine)
+session = Session(engine)
 
 sa = gspread.service_account_from_dict(creds)
 sh = sa.open("forumvision")
@@ -29,6 +35,10 @@ def main_page():
     st.markdown("# Forumvision - Main page")
     st.markdown("## All games - Full table")
     st.dataframe(df)
+
+    st.markdown("## All games - Full table SQL")
+    df2 = pd.read_sql(session.query(Song).statement, engine)
+    st.dataframe(df2)
 
 
 if __name__ == "__main__":

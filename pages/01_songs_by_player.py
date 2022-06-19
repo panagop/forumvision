@@ -21,7 +21,7 @@ st.markdown(f"### Επιλογή παίκτη: {selected_player}")
 st.markdown(f"#### τι διάλεξε")
 
 # get the player's songs and display the table
-df_player = df[df['Player']==selected_player]
+df_player = df[df['Player'] == selected_player]
 st.dataframe(df_player)
 
 # Chart
