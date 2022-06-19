@@ -2,6 +2,7 @@
 import pandas as pd
 from forumvision import df
 import altair as alt
+from st_aggrid import AgGrid
 
 st.markdown("# Songs by player")
 st.sidebar.markdown("## Songs by player")
@@ -22,7 +23,7 @@ st.markdown(f"#### τι διάλεξε")
 
 # get the player's songs and display the table
 df_player = df[df['Player'] == selected_player]
-st.dataframe(df_player)
+AgGrid(df_player, fit_columns_on_grid_load=True)
 
 # Chart
 st.markdown(f"#### ...και τι κατάφερε")

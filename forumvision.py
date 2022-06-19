@@ -4,9 +4,13 @@ import streamlit as st
 import gspread
 from gspread_dataframe import get_as_dataframe
 from sqlalchemy import create_engine
+from sqlalchemy import insert, func, desc
 from sqlalchemy.orm import Session
-from models import Base, Gyros, Song
+from models import Base, Song, Game, Gyros, Player, Grade, GyroComment
 import pandas as pd
+from st_aggrid import AgGrid
+
+st.set_page_config(page_title="forumvision statistics", layout="centered")
 
 # # Alternative option: Load data from Excel file
 # df = pd.read_excel("data/forumvision.xlsx")
@@ -20,25 +24,36 @@ else:
     creds = dict(st.secrets.creds)
 
 engine = create_engine('sqlite:///data/forumvision.db', echo=False)
-Base.metadata.create_all(engine)
 session = Session(engine)
 
-sa = gspread.service_account_from_dict(creds)
-sh = sa.open("forumvision")
-wks = sh.worksheet(title="Sheet1")
-df = get_as_dataframe(wks, usecols=[0, 1, 2, 3, 4, 5])
+# sa = gspread.service_account_from_dict(creds)
+# sh = sa.open("forumvision")
+# wks = sh.worksheet(title="Sheet1")
+# df = get_as_dataframe(wks, usecols=[0, 1, 2, 3, 4, 5])
 
+query = session.query(Grade.song_id, Song.artist.label('Artist'), Song.title.label('Title'),
+                           Song.player_id.label('Player'), Song.gyros_id.label('Game'),
+                           func.sum(Grade.grade).label('Points'),
+                           func.row_number().over(
+                           partition_by=Song.gyros_id,
+                           order_by=func.sum(Grade.grade).desc())
+                           .label('Pos')) \
+    .join(Song) \
+    .group_by(Grade.song_id) \
+    .order_by(Song.gyros_id, desc('Points'))
+
+df = pd.read_sql(query.statement, engine, index_col='song_id')
 
 def main_page():
     st.sidebar.markdown("# Forumvision - Main page")
 
     st.markdown("# Forumvision - Main page")
     st.markdown("## All games - Full table")
-    st.dataframe(df)
+    AgGrid(df, fit_columns_on_grid_load=True)
 
-    st.markdown("## All games - Full Song table with SQL")
-    df2 = pd.read_sql(session.query(Song).statement, engine, index_col='id')
-    st.dataframe(df2)
+    # st.markdown("## All games - Full Song table with SQL")
+    # df2 = pd.read_sql(session.query(Song).statement, engine, index_col='id')
+    # st.dataframe(df2)
 
 
 if __name__ == "__main__":
