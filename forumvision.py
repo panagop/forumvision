@@ -36,8 +36,8 @@ def main_page():
     st.markdown("## All games - Full table")
     st.dataframe(df)
 
-    st.markdown("## All games - Full table SQL")
-    df2 = pd.read_sql(session.query(Song).statement, engine)
+    st.markdown("## All games - Full Song table with SQL")
+    df2 = pd.read_sql(session.query(Song).statement, engine, index_col='id')
     st.dataframe(df2)
 
 
