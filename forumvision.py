@@ -34,7 +34,7 @@ session = Session(engine)
 query = session.query(Grade.song_id, Song.artist.label('Artist'), Song.title.label('Title'),
                            Song.player_id.label('Player'), Song.gyros_id.label('Game'),
                            func.sum(Grade.grade).label('Points'),
-                           func.row_number().over(
+                           func.rank().over(
                            partition_by=Song.gyros_id,
                            order_by=func.sum(Grade.grade).desc())
                            .label('Pos')) \
