@@ -34,9 +34,9 @@ session = Session(engine)
 # df = get_as_dataframe(wks, usecols=[0, 1, 2, 3, 4, 5])
 
 
-@st.cache
-def data_read():
-    query = session.query(Grade.song_id,
+
+
+query = session.query(Grade.song_id,
                     Song.artist.label('Artist'), 
                     Song.title.label('Title'),
                     Song.player_id.label('Player'), 
@@ -51,12 +51,7 @@ def data_read():
     .group_by(Grade.song_id) \
     .order_by(Song.gyros_id, desc('Points'))
 
-    df = pd.read_sql(query.statement, engine, index_col='song_id')
-
-    return df
-
-df = data_read()
-
+df = pd.read_sql(query.statement, engine, index_col='song_id')
 
 def main_page():
     st.sidebar.markdown("# Forumvision - Main page")
