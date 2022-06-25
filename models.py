@@ -111,7 +111,11 @@ class Grade(Base):
         self.comment = comment 
         
     def __repr__(self):
-        return f'Song {self.song_id} got {self.grade} points by {self.grader_id}'
+        text = r'Ο/Η/Το ' +  f'{self.grader_id} βαθμολόγησε με {self.grade} '
+        if self.comment is not None:
+            text += f'και σχολίασε: {self.comment}'
+        return text
+        # return f'Song {self.song_id} got {self.grade} points by {self.grader_id}'
         
 
 class GyroComment(Base):

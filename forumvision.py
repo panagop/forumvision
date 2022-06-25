@@ -39,7 +39,9 @@ st.set_page_config(page_title="forumvision statistics", layout="centered")
 # df = pd.read_excel("data/forumvision.xlsx")
 
 
-engine = create_engine('sqlite:///data/forumvision.db', echo=False)
+engine = create_engine('sqlite:///data/forumvision.db',
+                echo=False,
+                connect_args={'check_same_thread': False})
 session = Session(engine)
 
 # query = session.query(Grade.song_id,
@@ -58,26 +60,24 @@ session = Session(engine)
 #     .order_by(Song.gyros_id, desc('Points'))
 
 
-query = session.query(Song.id.label('song_id'),
+query = session.query(
                     Song.artist.label('Artist'), 
                     Song.title.label('Title'),
                     Song.player_id.label('Player'), 
                     Song.gyros_id.label('Game'),
                     SongRanking.points.label('Points'),
                     SongRanking.position.label('Pos'),
-                    Song.url) \
+                    Song.url,
+                    Song.id.label('song_id')) \
         .join(SongRanking)
 
-
-
-
-df = pd.read_sql(query.statement, engine, index_col='song_id')
+df = pd.read_sql(query.statement, engine)
 
 
 # def main_page():
-st.sidebar.markdown("# Forumvision - Main page")
+st.sidebar.markdown("# Main page")
 
-st.markdown("# Forumvision - Main page")
+st.markdown("# Main page")
 st.markdown("## All games - Full table")
 
 gd = GridOptionsBuilder.from_dataframe(df)
@@ -95,6 +95,10 @@ sel_row = grid_table["selected_rows"]
 
 try:
     st.video(sel_row[0]['url'])
+    q = session.query(Song).filter(Song.id == sel_row[0]['song_id']).one()
+    for gr in q.grades:
+        st.write(gr)
+
 except:
     pass
 
