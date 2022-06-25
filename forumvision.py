@@ -38,7 +38,7 @@ st.set_page_config(page_title="forumvision statistics", layout="centered")
 # # Alternative older version....: Load data from Excel file
 # df = pd.read_excel("data/forumvision.xlsx")
 
-@st.cache
+@st.cache(allow_output_mutation=True)
 def data_upload():
     engine = create_engine('sqlite:///data/forumvision.db', echo=False)
     session = Session(engine)
