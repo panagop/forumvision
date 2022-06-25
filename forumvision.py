@@ -42,20 +42,34 @@ st.set_page_config(page_title="forumvision statistics", layout="centered")
 engine = create_engine('sqlite:///data/forumvision.db', echo=False)
 session = Session(engine)
 
-query = session.query(Grade.song_id,
+# query = session.query(Grade.song_id,
+#                     Song.artist.label('Artist'), 
+#                     Song.title.label('Title'),
+#                     Song.player_id.label('Player'), 
+#                     Song.gyros_id.label('Game'),
+#                     func.sum(Grade.grade).label('Points'),
+#                     func.rank().over(
+#                     partition_by=Song.gyros_id,
+#                     order_by=func.sum(Grade.grade).desc())
+#                     .label('Pos'), 
+#                     Song.url) \
+#     .join(Song) \
+#     .group_by(Grade.song_id) \
+#     .order_by(Song.gyros_id, desc('Points'))
+
+
+query = session.query(Song.id.label('song_id'),
                     Song.artist.label('Artist'), 
                     Song.title.label('Title'),
                     Song.player_id.label('Player'), 
                     Song.gyros_id.label('Game'),
-                    func.sum(Grade.grade).label('Points'),
-                    func.rank().over(
-                    partition_by=Song.gyros_id,
-                    order_by=func.sum(Grade.grade).desc())
-                    .label('Pos'), 
+                    SongRanking.points.label('Points'),
+                    SongRanking.position.label('Pos'),
                     Song.url) \
-    .join(Song) \
-    .group_by(Grade.song_id) \
-    .order_by(Song.gyros_id, desc('Points'))
+        .join(SongRanking)
+
+
+
 
 df = pd.read_sql(query.statement, engine, index_col='song_id')
 
