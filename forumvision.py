@@ -53,29 +53,29 @@ query = session.query(Grade.song_id,
 
 df = pd.read_sql(query.statement, engine, index_col='song_id')
 
-def main_page():
-    st.sidebar.markdown("# Forumvision - Main page")
+# def main_page():
+st.sidebar.markdown("# Forumvision - Main page")
 
-    st.markdown("# Forumvision - Main page")
-    st.markdown("## All games - Full table")
+st.markdown("# Forumvision - Main page")
+st.markdown("## All games - Full table")
 
-    gd = GridOptionsBuilder.from_dataframe(df)
-    gd.configure_selection(selection_mode='single',use_checkbox=False)
-    gridoptions = gd.build()
+gd = GridOptionsBuilder.from_dataframe(df)
+gd.configure_selection(selection_mode='single',use_checkbox=False)
+gridoptions = gd.build()
 
-    grid_table = AgGrid(df,
-                        gridOptions=gridoptions,
-                        fit_columns_on_grid_load=False,
-                        theme = 'streamlit',
-                        height=500,
-                        update_mode= GridUpdateMode.SELECTION_CHANGED)
+grid_table = AgGrid(df,
+                    gridOptions=gridoptions,
+                    fit_columns_on_grid_load=False,
+                    theme = 'streamlit',
+                    height=500,
+                    update_mode= GridUpdateMode.SELECTION_CHANGED)
 
-    sel_row = grid_table["selected_rows"]
+sel_row = grid_table["selected_rows"]
 
-    try:
-        st.video(sel_row[0]['url'])
-    except:
-        pass
+try:
+    st.video(sel_row[0]['url'])
+except:
+    pass
 
 
     # st.markdown("## All games - Full Song table with SQL")
@@ -83,5 +83,5 @@ def main_page():
     # st.dataframe(df2)
 
 
-if __name__ == "__main__":
-    main_page()
+# if __name__ == "__main__":
+#     main_page()
