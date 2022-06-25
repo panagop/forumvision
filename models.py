@@ -1,11 +1,21 @@
 from sqlalchemy import create_engine, ForeignKey
 from sqlalchemy import Column, Date, Integer, String
-# from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import declarative_base, relationship
+from sqlalchemy.orm import declarative_base, relationship, backref
+
 
 Base = declarative_base()
 
-       
+
+def create_custom_view(engine, query_statement, view_name:str):
+    text = f'DROP TABLE IF EXISTS {view_name}'
+    with engine.connect() as conn:
+        conn.execute(text)
+
+    text = f'CREATE VIEW {view_name} AS ' + str(query_statement)
+    with engine.connect() as conn:
+        conn.execute(text)
+
+    
 class Game(Base):
     
     __tablename__ = 'game'
@@ -121,4 +131,46 @@ class GyroComment(Base):
         return f'Player {self.player_id} commented for round {self.gyros_id}: {self.comment}'
 
 
+class SongRanking(Base):
+    
+    __tablename__ = 'song_ranking'
+    
+    song_id = Column(String, ForeignKey('song.id'), primary_key=True) 
+    # gyros_id = Column(String, ForeignKey('gyros.id'), primary_key=True)
+    # player_id = Column(String, ForeignKey('player.id'))
+    points = Column(Integer, nullable=True)
+    position = Column(Integer, nullable=True)
+    
+    song = relationship("Song", backref=backref("song_ranking", uselist=False))
+
+    
+    def __init__(self, song_id, points, position):
+        self.song_id = song_id 
+        # self.gyros_id = gyros_id 
+        # self.player_id = player_id 
+        self.points = points 
+        self.position = position 
+        
+        
+class PlayerRanking(Base):
+    
+    __tablename__ = 'player_ranking'    
+    
+    song_id = Column(String, ForeignKey('song.id')) 
+    player_id = Column(String, ForeignKey('player.id'), primary_key=True)
+    gyros_id = Column(String, ForeignKey('gyros.id'), primary_key=True)
+    game_id = Column(String, ForeignKey('game.id')) 
+    points = Column(Integer, ForeignKey('song_ranking.points'), nullable=True)
+    sum_points = Column(Integer, nullable=True)
+    player_position = Column(Integer, nullable=True)
+    
+    
+    def __init__(self, song_id, player_id, gyros_id, game_id, points, sum_points, player_position):
+        self.song_id = song_id 
+        self.player_id = player_id 
+        self.gyros_id = gyros_id 
+        self.game_id = game_id 
+        self.points = points 
+        self.sum_points = sum_points 
+        self.player_position = player_position 
 
