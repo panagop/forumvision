@@ -64,7 +64,7 @@ query = session.query(
                     Song.artist.label('Artist'), 
                     Song.title.label('Title'),
                     Song.player_id.label('Player'), 
-                    Song.gyros_id.label('Game'),
+                    Song.gyros_id.label('Round'),
                     SongRanking.points.label('Points'),
                     SongRanking.position.label('Pos'),
                     Song.url,
@@ -76,6 +76,7 @@ df = pd.read_sql(query.statement, engine)
 
 # def main_page():
 st.sidebar.markdown("# Main page")
+st.sidebar.markdown('Επιλέγοντας κομμάτι στον πίνακα εμφανίζεται το βίντεο, οι βαθμολογίες και τα σχόλια')
 
 st.markdown("# Main page")
 st.markdown("## All games - Full table")
