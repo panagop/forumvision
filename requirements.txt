@@ -8,3 +8,4 @@ gspread
 gspread_dataframe
 sqlalchemy
 streamlit-aggrid
+seaborn

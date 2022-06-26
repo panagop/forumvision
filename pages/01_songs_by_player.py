@@ -9,14 +9,16 @@ from sqlalchemy.orm import Session
 from models import Base, Song, Game, Gyros, Player, Grade, GyroComment
 from models import SongRanking, PlayerRanking
 
+from forumvision import engine, session
+
 st.markdown("# Κομμάτια ανά παίκτη ανά παιχνίδι")
 st.sidebar.markdown("## Κομμάτια ανά παίκτη ανά παιχνίδι")
 
 
-engine = create_engine('sqlite:///data/forumvision.db',
-                echo=False,
-                connect_args={'check_same_thread': False})
-session = Session(engine)
+# engine = create_engine('sqlite:///data/forumvision.db',
+#                 echo=False,
+#                 connect_args={'check_same_thread': False})
+# session = Session(engine)
 
 
 players = [p.id for p in session.query(Player).all()]

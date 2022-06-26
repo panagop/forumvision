@@ -8,14 +8,19 @@ from sqlalchemy.orm import Session
 from models import Base, Song, Game, Gyros, Player, Grade, GyroComment
 from models import SongRanking, PlayerRanking
 
+from forumvision import engine, session
 
+# engine = create_engine('sqlite:///data/forumvision.db',
+#                 echo=False,
+#                 connect_args={'check_same_thread': False})
+# session = Session(engine)
 
 st.markdown("# Κομμάτια ανά γύρο")
 st.sidebar.markdown("## Κομμάτια ανά γύρο")
 
-players = sorted(df['Round'].unique())
+rounds = [g.id for g in session.query(Gyros).all()]
 
-selected_round = st.sidebar.selectbox('Select a game/round', players)
+selected_round = st.sidebar.selectbox('Select a game/round', rounds)
 
 st.markdown(f"### Playlist of {selected_round}")
 
