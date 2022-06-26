@@ -44,7 +44,7 @@ query = session.query(
                     Song.player_id.label('Player'), 
                     Song.gyros_id.label('Round'),
                     SongRanking.points.label('Points'),
-                    SongRanking.position.label('Pos'),
+                    SongRanking.position.label('Position'),
                     Song.id.label('song_id')) \
         .join(SongRanking) \
         .filter(Song.player_id==selected_player) \

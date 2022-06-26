@@ -15,7 +15,7 @@ from forumvision import engine, session
 
 st.set_page_config(layout="centered")
 
-st.markdown('Εξέλιξη βαθμολογίας ανά παιχνίδι')
+st.markdown('# Εξέλιξη βαθμολογίας ανά παιχνίδι')
 
 games = [g.id for g in session.query(Game).all()]
 
