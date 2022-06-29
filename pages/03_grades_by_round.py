@@ -14,7 +14,7 @@ engine, session = create_session()
 
 
 
-st.set_page_config(layout="wide")
+# st.set_page_config(layout="wide")
 
 st.markdown('## Βαθμολογίες ανά γύρο')
 
