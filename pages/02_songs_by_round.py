@@ -17,12 +17,12 @@ engine, session = create_session()
 
 # Query the data
 query = session.query(
+                    SongRanking.position.label('Position'),
+                    SongRanking.points.label('Points'),
                     Song.artist.label('Artist'), 
                     Song.title.label('Title'),
                     Song.player_id.label('Player'), 
                     Song.gyros_id.label('Round'),
-                    SongRanking.points.label('Points'),
-                    SongRanking.position.label('Pos'),
                     Song.url,
                     Song.id.label('song_id')) \
         .join(SongRanking)
