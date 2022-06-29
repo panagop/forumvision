@@ -28,7 +28,7 @@ df = pd.read_sql(query.statement, engine)
 
 players_option = st.sidebar.radio('Players Option', ['All players', 'Selected players'])
 
-players = list(df['player_id'].unique())
+players = sorted(list(df['player_id'].unique()))
 
 if players_option=='All players':
     selected_players = players
