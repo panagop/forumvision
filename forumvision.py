@@ -6,12 +6,10 @@ import pandas as pd
 import streamlit as st
 from st_aggrid import AgGrid, GridUpdateMode, JsCode
 from st_aggrid.grid_options_builder import GridOptionsBuilder
-from sqlalchemy import create_engine
 from sqlalchemy import insert, func, desc
-from sqlalchemy.orm import Session
 from models import Base, Song, Game, Gyros, Player, Grade, GyroComment
 from models import SongRanking, PlayerRanking
-
+from axaxa import create_session
 
 
 st.set_page_config(page_title="forumvision statistics", layout="centered")
@@ -38,11 +36,8 @@ st.set_page_config(page_title="forumvision statistics", layout="centered")
 # # Alternative older version....: Load data from Excel file
 # df = pd.read_excel("data/forumvision.xlsx")
 
+engine, session = create_session()
 
-engine = create_engine('sqlite:///data/forumvision.db',
-                echo=False,
-                connect_args={'check_same_thread': False})
-session = Session(engine)
 
 # query = session.query(Grade.song_id,
 #                     Song.artist.label('Artist'), 

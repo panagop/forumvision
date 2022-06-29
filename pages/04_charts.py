@@ -14,6 +14,7 @@ import matplotlib.pyplot as plt
 from forumvision import engine, session
 
 st.set_page_config(layout="centered")
+sns.set_style("darkgrid", {"axes.facecolor": ".9"})
 
 st.markdown('# Εξέλιξη βαθμολογίας ανά παιχνίδι')
 
