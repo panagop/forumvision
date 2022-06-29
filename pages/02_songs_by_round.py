@@ -1,5 +1,6 @@
 ﻿import streamlit as st
-from forumvision import df
+# from forumvision import df
+import pandas as pd
 from st_aggrid import AgGrid, GridUpdateMode, JsCode
 from st_aggrid.grid_options_builder import GridOptionsBuilder
 from sqlalchemy import create_engine
@@ -8,12 +9,26 @@ from sqlalchemy.orm import Session
 from models import Base, Song, Game, Gyros, Player, Grade, GyroComment
 from models import SongRanking, PlayerRanking
 
-from forumvision import engine, session
+from displays.displays import show_video, show_song_grades
 
-# engine = create_engine('sqlite:///data/forumvision.db',
-#                 echo=False,
-#                 connect_args={'check_same_thread': False})
-# session = Session(engine)
+# from forumvision import engine, session
+from axaxa import create_session
+engine, session = create_session()
+
+# Query the data
+query = session.query(
+                    Song.artist.label('Artist'), 
+                    Song.title.label('Title'),
+                    Song.player_id.label('Player'), 
+                    Song.gyros_id.label('Round'),
+                    SongRanking.points.label('Points'),
+                    SongRanking.position.label('Pos'),
+                    Song.url,
+                    Song.id.label('song_id')) \
+        .join(SongRanking)
+
+# Convert to dataframe
+df = pd.read_sql(query.statement, engine)
 
 st.markdown("# Κομμάτια ανά γύρο")
 st.sidebar.markdown("## Κομμάτια ανά γύρο")
@@ -36,3 +51,14 @@ grid_table = AgGrid(df[df['Round'] == selected_round],
                     update_mode= GridUpdateMode.SELECTION_CHANGED)
 
 # AgGrid(df[df['Round'] == selected_round], fit_columns_on_grid_load=True)
+
+# Show info for the selected song
+sel_row = grid_table["selected_rows"]
+
+if sel_row:
+    video_url = sel_row[0]['url']
+    song_id = sel_row[0]['song_id']
+
+    show_video(video_url)
+    show_song_grades(session, song_id)
+

@@ -11,16 +11,20 @@ from models import SongRanking, PlayerRanking
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-from forumvision import engine, session
+from displays.displays import improve_legend
 
-st.set_page_config(layout="centered")
+# from forumvision import engine, session
+
+from axaxa import create_session
+engine, session = create_session()
+
 sns.set_style("darkgrid", {"axes.facecolor": ".9"})
 
 st.markdown('# Εξέλιξη βαθμολογίας ανά παιχνίδι')
 
 games = [g.id for g in session.query(Game).all()]
 
-selected_game = st.sidebar.selectbox('Select a game', games)
+selected_game = st.sidebar.selectbox('Select a game', games, index=len(games)-1)
 
 query = session.query(PlayerRanking).filter(PlayerRanking.game_id==selected_game)
 df = pd.read_sql(query.statement, engine)
@@ -43,7 +47,9 @@ df = pd.read_sql(query.statement, engine)
 try:
     fig, ax = plt.subplots()
     df.pivot_table('sum_points', index='gyros_id', columns='player_id', aggfunc='sum').plot(ax=ax, figsize=(12,8))
+    improve_legend(ax)
 except:
     pass
 
 st.pyplot(fig)
+

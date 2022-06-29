@@ -9,52 +9,24 @@ from st_aggrid.grid_options_builder import GridOptionsBuilder
 from sqlalchemy import insert, func, desc
 from models import Base, Song, Game, Gyros, Player, Grade, GyroComment
 from models import SongRanking, PlayerRanking
-from axaxa import create_session
 
+from axaxa import create_session
+from displays.displays import show_video, show_song_grades
 
 st.set_page_config(page_title="forumvision statistics", layout="centered")
 
+# def main_page():
+st.sidebar.markdown("# Main page")
+st.sidebar.markdown('Επιλέγοντας κομμάτι στον πίνακα εμφανίζεται το βίντεο, οι βαθμολογίες και τα σχόλια')
 
-## older version....using google sheets
-
-# if os.path.exists('credentials.json'):
-#     with open('credentials.json') as f:
-#         creds = json.load(f)
-#     # # or directly from the json file
-#     # sa = gspread.service_account(filename='credentials.json')
-# else:
-#     creds = dict(st.secrets.creds)
-
-# sa = gspread.service_account_from_dict(creds)
-# sh = sa.open("forumvision")
-# wks = sh.worksheet(title="Sheet1")
-# df = get_as_dataframe(wks, usecols=[0, 1, 2, 3, 4, 5])
-
-# end of older version....using google sheets 
+st.markdown("# Main page")
+st.markdown("## All games - Full table")
 
 
-# # Alternative older version....: Load data from Excel file
-# df = pd.read_excel("data/forumvision.xlsx")
-
+# Load the data
 engine, session = create_session()
 
-
-# query = session.query(Grade.song_id,
-#                     Song.artist.label('Artist'), 
-#                     Song.title.label('Title'),
-#                     Song.player_id.label('Player'), 
-#                     Song.gyros_id.label('Game'),
-#                     func.sum(Grade.grade).label('Points'),
-#                     func.rank().over(
-#                     partition_by=Song.gyros_id,
-#                     order_by=func.sum(Grade.grade).desc())
-#                     .label('Pos'), 
-#                     Song.url) \
-#     .join(Song) \
-#     .group_by(Grade.song_id) \
-#     .order_by(Song.gyros_id, desc('Points'))
-
-
+# Query the data
 query = session.query(
                     Song.artist.label('Artist'), 
                     Song.title.label('Title'),
@@ -66,16 +38,10 @@ query = session.query(
                     Song.id.label('song_id')) \
         .join(SongRanking)
 
+# Convert to dataframe
 df = pd.read_sql(query.statement, engine)
 
-
-# def main_page():
-st.sidebar.markdown("# Main page")
-st.sidebar.markdown('Επιλέγοντας κομμάτι στον πίνακα εμφανίζεται το βίντεο, οι βαθμολογίες και τα σχόλια')
-
-st.markdown("# Main page")
-st.markdown("## All games - Full table")
-
+# Create the grid
 gd = GridOptionsBuilder.from_dataframe(df)
 gd.configure_selection(selection_mode='single',use_checkbox=False)
 gridoptions = gd.build()
@@ -87,21 +53,18 @@ grid_table = AgGrid(df,
                     height=500,
                     update_mode= GridUpdateMode.SELECTION_CHANGED)
 
+# Show info for the selected song
 sel_row = grid_table["selected_rows"]
 
-try:
-    st.video(sel_row[0]['url'])
-    q = session.query(Song).filter(Song.id == sel_row[0]['song_id']).one()
-    for gr in q.grades:
-        st.write(gr)
+if sel_row:
+    video_url = sel_row[0]['url']
+    song_id = sel_row[0]['song_id']
 
-except:
-    pass
+    show_video(video_url)
+    show_song_grades(session, song_id)
 
 
-    # st.markdown("## All games - Full Song table with SQL")
-    # df2 = pd.read_sql(session.query(Song).statement, engine, index_col='id')
-    # st.dataframe(df2)
+
 
 
 # if __name__ == "__main__":

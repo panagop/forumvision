@@ -9,7 +9,11 @@ from sqlalchemy.orm import Session
 from models import Base, Song, Game, Gyros, Player, Grade, GyroComment
 from models import SongRanking, PlayerRanking
 
-from forumvision import engine, session
+from displays.displays import show_video, show_song_grades
+
+# from forumvision import engine, session
+from axaxa import create_session
+engine, session = create_session()
 
 st.markdown("# Κομμάτια ανά παίκτη ανά παιχνίδι")
 st.sidebar.markdown("## Κομμάτια ανά παίκτη ανά παιχνίδι")
@@ -45,6 +49,7 @@ query = session.query(
                     Song.gyros_id.label('Round'),
                     SongRanking.points.label('Points'),
                     SongRanking.position.label('Position'),
+                    Song.url,
                     Song.id.label('song_id')) \
         .join(SongRanking) \
         .filter(Song.player_id==selected_player) \
@@ -90,3 +95,13 @@ text = chart.mark_text(
 
 # display the chart
 st.altair_chart((chart+text))
+
+# Show info for the selected song
+sel_row = grid_table["selected_rows"]
+
+if sel_row:
+    video_url = sel_row[0]['url']
+    song_id = sel_row[0]['song_id']
+
+    show_video(video_url)
+    show_song_grades(session, song_id)
