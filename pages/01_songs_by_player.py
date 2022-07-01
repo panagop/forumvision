@@ -42,25 +42,20 @@ selected_game = st.sidebar.selectbox('Select a game', games)
 chart_option = st.sidebar.radio('Chart option', ['Points', 'Position'])
 chart_text_option = st.sidebar.radio('Chart text', ['Title', 'Artist'])
 
-@st.cache
-def read_data(selected_player, selected_game):
-    query = session.query(
-                        Song.artist.label('Artist'), 
-                        Song.title.label('Title'),
-                        Song.player_id.label('Player'), 
-                        Song.gyros_id.label('Round'),
-                        SongRanking.points.label('Points'),
-                        SongRanking.position.label('Position'),
-                        Song.url,
-                        Song.id.label('song_id')) \
-            .join(SongRanking) \
-            .filter(Song.player_id==selected_player) \
-            .filter(Song.gyros_id.contains(selected_game))
+query = session.query(
+                    Song.artist.label('Artist'), 
+                    Song.title.label('Title'),
+                    Song.player_id.label('Player'), 
+                    Song.gyros_id.label('Round'),
+                    SongRanking.points.label('Points'),
+                    SongRanking.position.label('Position'),
+                    Song.url,
+                    Song.id.label('song_id')) \
+        .join(SongRanking) \
+        .filter(Song.player_id==selected_player) \
+        .filter(Song.gyros_id.contains(selected_game))
 
-    df = pd.read_sql(query.statement, engine)
-    return df
-
-df = read_data(selected_player, selected_game)
+df = pd.read_sql(query.statement, engine)
 
 
 st.markdown(f"### Επιλογή παίκτη: {selected_player}")
