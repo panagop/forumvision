@@ -42,7 +42,7 @@ selected_game = st.sidebar.selectbox('Select a game', games)
 chart_option = st.sidebar.radio('Chart option', ['Points', 'Position'])
 chart_text_option = st.sidebar.radio('Chart text', ['Title', 'Artist'])
 
-@st.cache()
+@st.cache
 def read_data(selected_player, selected_game):
     query = session.query(
                         Song.artist.label('Artist'), 
