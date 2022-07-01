@@ -27,9 +27,10 @@ games = [g.id for g in session.query(Game).all()]
 
 selected_game = st.sidebar.selectbox('Select a game', games, index=len(games)-1)
 
+# load the data from the database
 query = session.query(PlayerRanking).filter(PlayerRanking.game_id==selected_game)
 df = pd.read_sql(query.statement, engine)
-# st.dataframe(df)
+
 
 players_option = st.sidebar.radio('Players Option', ['All players', 'Selected players'])
 
@@ -40,10 +41,10 @@ if players_option=='All players':
 else:
     selected_players = st.sidebar.multiselect('select players', players, default=players)
 
-
+# load the data for the selected players
 query = query.filter(PlayerRanking.player_id.in_(selected_players))
 df = pd.read_sql(query.statement, engine)
-# st.dataframe(df)
+
 
 
 chart_type_option = st.radio('Chart type', ['Static', 'Interactive'], index=1)
