@@ -10,6 +10,7 @@ from models import SongRanking, PlayerRanking
 
 import seaborn as sns
 import matplotlib.pyplot as plt
+import altair as alt
 
 from displays.displays import improve_legend
 
@@ -44,12 +45,41 @@ query = query.filter(PlayerRanking.player_id.in_(selected_players))
 df = pd.read_sql(query.statement, engine)
 # st.dataframe(df)
 
-try:
+
+chart_type_option = st.radio('Chart type', ['Static', 'Interactive'], index=1)
+
+# try:
+chart_include_names = st.checkbox('Include names on chart', value=False)
+
+if chart_type_option == 'Static':
     fig, ax = plt.subplots()
     df.pivot_table('sum_points', index='gyros_id', columns='player_id', aggfunc='sum').plot(ax=ax, figsize=(12,8))
-    improve_legend(ax)
-except:
-    pass
+    if chart_include_names: improve_legend(ax)
+    st.pyplot(fig)
+else:
+    
+    chart = alt.Chart(df, height=600).transform_window(
+            cumulative='sum(points)',
+            sort=[{"field": "gyros_id"}],
+            groupby=['player_id'],
+        ).mark_line().encode(
+            x='gyros_id:N',
+            y='cumulative:Q',
+            color='player_id:N',
+            text='player_id:N',
+        )
 
-st.pyplot(fig)
+    if chart_include_names:
+        chart = chart+chart.mark_text(align='left', dx=5).encode(
+            text='player_id:N')
+
+    st.altair_chart(chart.interactive(), use_container_width=True)
+
+# except:
+#     pass
+
+
+
+
+
 
